@@ -1,0 +1,53 @@
+{
+  "name": "pixi-dragonbones",
+  "version": "1.0.0",
+  "description": "Pixi.js plugin that enables Dragonbones support.",
+  "license": "MIT",
+  "main": "./src/index.js",
+  "author": "Marcin Horoszko <horoszko.marcin@gmail.com>",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ".git"
+  },
+  "bugs": {
+    "url": "/issues"
+  },
+  "scripts": {
+    "test": "gulp test",
+    "build": "gulp build",
+    "docs": "./node_modules/.bin/jsdoc -c ./gulp/util/jsdoc.conf.json"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "keywords": [
+    "2d",
+    "pixi"
+  ],
+  "peerDependencies": {
+    "pixi.js": "^3.0.2"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "del": "^1.1.0",
+    "gulp": "^3.8.10",
+    "gulp-cached": "^1.0.2",
+    "gulp-jshint": "^1.9.0",
+    "gulp-plumber": "^0.6.6",
+    "gulp-rename": "^1.2.0",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.0.2",
+    "gulp-util": "^3.0.1",
+    "jaguarjs-jsdoc": "git+https://github.com/davidshimjs/jaguarjs-jsdoc.git",
+    "jsdoc": "^3.3.0",
+    "jshint-summary": "^0.4.0",
+    "require-dir": "^0.1.0",
+    "run-sequence": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.2.1",
+    "gulp-mirror": "^0.4.0"
+  }
+}
