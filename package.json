@@ -28,7 +28,9 @@
   "peerDependencies": {
     "pixi.js": "^3.0.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "resource-loader": "^1.6.0"
+  },
   "devDependencies": {
     "browserify": "^9.0.3",
     "del": "^1.1.0",

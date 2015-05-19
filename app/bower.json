@@ -1,0 +1,6 @@
+{
+  "name": "pixi-application",
+  "dependencies": {
+    "pixi": "^3.0.1"
+  }
+}

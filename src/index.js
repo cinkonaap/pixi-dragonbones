@@ -13,6 +13,8 @@ Dragonbones.makeArmature = function (armatureName, skeletonJSON, atlasJson, text
     return armature;
 };
 
+Dragonbones.loaders = require('./loaders');
+
 module.exports = PIXI.dragonbones = Dragonbones;
 
 
