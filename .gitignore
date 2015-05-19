@@ -23,3 +23,5 @@ node_modules
 
 app/node_modules
 app/public/bower_components
+app/public/libs/bin
+

@@ -21,13 +21,15 @@ function rebundle(devBundle) {
 
     debug = sourcemaps.init({loadMaps: true});
     debug.pipe(sourcemaps.write('./', {sourceRoot: './'}))
-        .pipe(gulp.dest(paths.out));
+        .pipe(gulp.dest(paths.out))
+        .pipe(gulp.dest(paths.out2App));
 
     min = rename({ suffix: '.min' });
     min.pipe(sourcemaps.init({loadMaps: true}))
         .pipe(uglify())
         .pipe(sourcemaps.write('./', {sourceRoot: './', addComment: false}))
-        .pipe(gulp.dest(paths.out));
+        .pipe(gulp.dest(paths.out))
+        .pipe(gulp.dest(paths.out2App));
 
     var stream = this.bundle()
         .on('error', handleErrors.handler)

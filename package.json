@@ -16,6 +16,7 @@
   "scripts": {
     "test": "gulp test",
     "build": "gulp build",
+    "app": "gulp app",
     "docs": "./node_modules/.bin/jsdoc -c ./gulp/util/jsdoc.conf.json"
   },
   "engines": {
@@ -50,6 +51,7 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^2.2.1",
-    "gulp-mirror": "^0.4.0"
+    "gulp-mirror": "^0.4.0",
+    "gulp-concat": "^2.5.2"
   }
 }

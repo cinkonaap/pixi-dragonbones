@@ -22,8 +22,13 @@ var gulp        = require('gulp'),
 global.paths = {
     src: './src',
     out: './bin',
+    out2App: './app/public/libs/bin',
+
+    appSrc: './app/src',
+    appOut: './app/public/js',
 
     get scripts() { return this.src + '/**/*.js'; },
+    get appScripts() { return this.appSrc + '/**/*.js'; },
     get jsEntry() { return this.src + '/index'; }
 };
 

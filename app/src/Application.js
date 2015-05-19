@@ -16,17 +16,18 @@
 
     Application.prototype._addDragonbones = function () {
         PIXI.loader
-            .use(PIXI.dragonbones.loaders.dragonbonesParser)
+            .use(PIXI.dragonbones.loaders.skeletonParser)
             .add([
                 {name: 'dragon', url: 'assets/dragon_skeleton.json'}
             ])
             .load((function (loader, res) {
-                var arm = PIXI.dragonbones.makeArmature("dragonBoy", res.dragonSkeleton.data, res.dragonAtlas.data, res.dragonAtlasImage.data);
+                console.log('loading completed!');
+                //var arm = PIXI.dragonbones.makeArmature("dragonBoy", res.dragonSkeleton.data, res.dragonAtlas.data, res.dragonAtlasImage.data);
             }).bind(this));
     };
 
     Application.prototype._addText = function () {
-        this._label = new PIXI.Text('Spine in Pixey!', {
+        this._label = new PIXI.Text('DragonBones3 in Pixey!', {
             fill: "#FF0000",
             stroke: "#0000FF",
             strokeThickness: 5,

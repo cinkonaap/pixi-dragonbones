@@ -3712,7 +3712,7 @@ module.exports = TextureAtlas;
 var Resource = PIXI.loaders.Resource,
     async = PIXI.utils.async;
 
-var DragonbonesParser = function () {
+var SkeletonParser = function () {
     return function (resource, next) {
         console.log(resource);
         var pureResourcePath = resource.url.split('_skeleton.json')[0];
@@ -3730,12 +3730,12 @@ var DragonbonesParser = function () {
     }
 };
 
-module.exports = DragonbonesParser;
+module.exports = SkeletonParser;
 },{}],8:[function(require,module,exports){
 module.exports = {
-    dragonbonesParser: require('./DragonbonesParser')
+    skeletonParser: require('./SkeletonParser')
 };
-},{"./DragonbonesParser":7}]},{},[1])
+},{"./SkeletonParser":7}]},{},[1])
 
 
 //# sourceMappingURL=pixi-dragonbones.js.map

@@ -1,3 +1,3 @@
 module.exports = {
-    dragonbonesParser: require('./DragonbonesParser')
+    skeletonParser: require('./SkeletonParser')
 };
