@@ -2,16 +2,19 @@ var gulp    = require('gulp'),
     concat  = require('gulp-concat'),
     uglify  = require('gulp-uglify'),
     mirror  = require('gulp-mirror'),
-    rename  = require('gulp-rename');
+    rename  = require('gulp-rename'),
+    clone   = require('gulp-clone');
 
 gulp.task('app', function () {
-    var debug;
+    var debug, min;
 
     debug = gulp.src(paths.appScripts)
         .pipe(concat('app.js'))
-        .pipe(mirror(rename('app.min.js')))
-        .pipe(uglify())
         .pipe(gulp.dest(paths.appOut));
 
-    return debug;
+    /*min = debug.pipe(clone())
+        .pipe(uglify('app.min.js'))
+        .pipe(gulp.dest(paths.appOut));
+*/
+    return;
 });

@@ -2,10 +2,10 @@
 var DragonbonesRuntime = require('./DragonbonesRuntime/dragonBones'),
     Dragonbones = require('./Dragonbones');
 
-Dragonbones.makeArmature = function (armatureName, skeletonJSON, atlasJson, texture) {
+Dragonbones.makeArmature = function (armatureName, dataName) {
     var factory = new Dragonbones.factory.Factory();
-    factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(skeletonJSON));
-    factory.addTextureAtlas(new Dragonbones.textures.TextureAtlas(texture, atlasJson));
+    factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(Dragonbones.loaders.skeletonParser.skeletons[dataName]));
+    factory.addTextureAtlas(new Dragonbones.textures.TextureAtlas(texture, Dragonbones.loaders.skeletonParser.atlases[dataName]));
 
     var armature = factory.buildArmature(armatureName);
 
@@ -3714,21 +3714,33 @@ var Resource = PIXI.loaders.Resource,
 
 var SkeletonParser = function () {
     return function (resource, next) {
-        console.log(resource);
-        var pureResourcePath = resource.url.split('_skeleton.json')[0];
+        if(resource.url.indexOf('_skeleton.json') < 0) {
+            return next();
+        }
+
+        SkeletonParser.skeletons[resource.name] = resource.data;
+
+        var atlasPath = resource.url.split('_skeleton.json')[0] + '_atlas.json';
 
         var atlasOptions = {
             crossOrigin: resource.crossOrigin,
             xhrType: Resource.XHR_RESPONSE_TYPE.JSON
         };
+        
+        this.add(resource.name + '_atlas', atlasPath, atlasOptions, function (res) {
+            var data = this.data;
 
-        this.add(pureResourcePath + '_atlas.json', pureResourcePath, atlasOptions, function (res) {
-            var dragonbonesAtlasData = this.xhr.response;
+            SkeletonParser.atlases[this.name] = data;
 
-            console.log(dragonbonesAtlasData);
+            //var atlasImagesPaths = [ data.imagePath ];
+
+            next();
         });
     }
 };
+
+SkeletonParser.skeletons = {};
+SkeletonParser.atlases = {};
 
 module.exports = SkeletonParser;
 },{}],8:[function(require,module,exports){

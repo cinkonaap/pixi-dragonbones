@@ -16,13 +16,13 @@
 
     Application.prototype._addDragonbones = function () {
         PIXI.loader
-            .use(PIXI.dragonbones.loaders.skeletonParser)
+            .use(PIXI.dragonbones.loaders.skeletonParser())
             .add([
                 {name: 'dragon', url: 'assets/dragon_skeleton.json'}
             ])
             .load((function (loader, res) {
                 console.log('loading completed!');
-                //var arm = PIXI.dragonbones.makeArmature("dragonBoy", res.dragonSkeleton.data, res.dragonAtlas.data, res.dragonAtlasImage.data);
+                var arm = PIXI.dragonbones.makeArmature("dragonBoy", "dragon");
             }).bind(this));
     };
 
