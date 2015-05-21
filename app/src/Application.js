@@ -21,25 +21,23 @@
                 {name: 'dragon', url: 'assets/dragon_skeleton.json'}
             ])
             .load((function (loader, res) {
-                var arm = PIXI.dragonbones.makeArmature("dragonBoy", "DragonBoy");
-                arm.animation.gotoAndPlay("walk", 0.2);
+                var skeleton = PIXI.dragonbones.display.Skeleton.makeArmature("dragonBoy", "DragonBoy");
+                skeleton.animation.gotoAndPlay("walk", 0.2);
 
-                var dragon = arm.getDisplay();
-                // position it
-                dragon.x = 270;
-                dragon.y = 450;
-                dragon.interactive = true;
+                skeleton.display.x = 270;
+                skeleton.display.y = 450;
+                skeleton.display.interactive = true;
 
                 var state = 0;
-                dragon.on('mousedown', function (e) {
-                    state == 0 ? arm.animation.gotoAndPlay("stand", 0.2) : arm.animation.gotoAndPlay("walk", 0.2);
+                skeleton.display.on('mousedown', function (e) {
+                    state == 0 ? skeleton.animation.gotoAndPlay("stand", 0.2) : skeleton.animation.gotoAndPlay("walk", 0.2);
 
                     state = (state + 1) % 2;
 
                     //arm.getSlot("clothes").setDisplay(factory.getTextureDisplay("parts/clothes" + 1));
                 });
 
-                this._stage.addChild(dragon);
+                this._stage.addChild(skeleton.display);
             }).bind(this));
     };
 
@@ -78,7 +76,7 @@
 
         this._filterCount += 0.1;
 
-        dragonBones.animation.WorldClock.clock.advanceTime(0.02);
+        PIXI.dragonbones.runtime.animation.WorldClock.clock.advanceTime(0.02);
 
         this._renderer.render(this._stage);
     };

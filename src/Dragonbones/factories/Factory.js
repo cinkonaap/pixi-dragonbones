@@ -1,7 +1,7 @@
-var DragonbonesRuntime  = require('../../DragonbonesRuntime/dragonBones'),
-    DisplayBridge       = require('../display/DisplayBridge'),
-    Sprite              = require('../display/Sprite');
-    DOC                 = require('../display/DisplayObjectContainer');
+var DragonbonesRuntime      = require('../../DragonbonesRuntime/dragonBones'),
+    DisplayBridge           = require('../display/DisplayBridge'),
+    Sprite                  = require('../display/Sprite');
+    DisplayObjectContainer  = require('../display/DisplayObjectContainer');
 
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -17,7 +17,7 @@ var Factory = (function (_super) {
     };
 
     Factory.prototype._generateArmature = function() {
-        var armature = new DragonbonesRuntime.Armature(new DOC());
+        var armature = new DragonbonesRuntime.Armature(new DisplayObjectContainer());
         return armature;
     };
 
