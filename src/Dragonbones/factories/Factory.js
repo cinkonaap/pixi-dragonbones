@@ -1,5 +1,6 @@
-var DragonbonesRuntime = require('../../DragonbonesRuntime/dragonBones'),
-    DisplayBridge  = require('../display/DisplayBridge');
+var DragonbonesRuntime  = require('../../DragonbonesRuntime/dragonBones'),
+    DisplayBridge       = require('../display/DisplayBridge'),
+    Sprite              = require('../display/Sprite');
 
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25,13 +26,7 @@ var Factory = (function (_super) {
     };
 
     Factory.prototype._generateDisplay = function(textureAtlas, fullName, pivotX, pivotY) {
-        var texture = PIXI.Texture.fromFrame(fullName);
-
-        var image = new PIXI.Sprite(texture);
-        image.pivot.x = pivotX;
-        image.pivot.y = pivotY;
-
-        return image;
+        return new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
     };
 
     return Factory;

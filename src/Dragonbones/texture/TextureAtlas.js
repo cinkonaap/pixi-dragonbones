@@ -31,6 +31,7 @@ var TextureAtlas = (function () {
             this._regions[subTextureName] = textureAtlasData[subTextureName];
         }
     };
+
     return TextureAtlas;
 })();
 

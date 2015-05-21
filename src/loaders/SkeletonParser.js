@@ -1,5 +1,6 @@
-var Resource = PIXI.loaders.Resource,
-    async = PIXI.utils.async;
+var Resource    = PIXI.loaders.Resource,
+    async       = PIXI.utils.async,
+    AtlasParser = require('./AtlasParser');
 
 var SkeletonParser = function () {
     return function (resource, next) {
@@ -7,28 +8,21 @@ var SkeletonParser = function () {
             return next();
         }
 
-        SkeletonParser.skeletons[resource.name] = resource.data;
+        var skeletonData = resource.data;
+        SkeletonParser.skeletons[skeletonData.name] = skeletonData;
 
         var atlasPath = resource.url.split('_skeleton.json')[0] + '_atlas.json';
+        var atlasKey = resource.name + '_atlas';
 
-        var atlasOptions = {
-            crossOrigin: resource.crossOrigin,
-            xhrType: Resource.XHR_RESPONSE_TYPE.JSON
-        };
-        
-        this.add(resource.name + '_atlas', atlasPath, atlasOptions, function (res) {
-            var data = this.data;
-
-            SkeletonParser.atlases[this.name] = data;
-
-            //var atlasImagesPaths = [ data.imagePath ];
-
+        var atlasLoader = new PIXI.loaders.Loader();
+        atlasLoader.use(AtlasParser());
+        atlasLoader.add(skeletonData.name + '_atlas', atlasPath);
+        atlasLoader.load((function (loader, res) {
             next();
-        });
+        }).bind(this));
     }
 };
 
 SkeletonParser.skeletons = {};
-SkeletonParser.atlases = {};
 
 module.exports = SkeletonParser;

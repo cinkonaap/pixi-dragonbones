@@ -4,7 +4,6 @@ var DragonbonesRuntime = require('./DragonbonesRuntime/dragonBones'),
 Dragonbones.makeArmature = function (armatureName, dataName) {
     var factory = new Dragonbones.factory.Factory();
     factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(Dragonbones.loaders.skeletonParser.skeletons[dataName]));
-    factory.addTextureAtlas(new Dragonbones.textures.TextureAtlas(texture, Dragonbones.loaders.skeletonParser.atlases[dataName]));
 
     var armature = factory.buildArmature(armatureName);
 
@@ -15,6 +14,12 @@ Dragonbones.makeArmature = function (armatureName, dataName) {
 
 Dragonbones.loaders = require('./loaders');
 
-module.exports = PIXI.dragonbones = Dragonbones;
+module.exports = {
+    runtime: DragonbonesRuntime,
+    dragonbones: Dragonbones
+};
+
+PIXI.dragonbones = Dragonbones;
+dragonBones = DragonbonesRuntime;
 
 

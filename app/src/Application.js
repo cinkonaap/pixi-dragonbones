@@ -21,8 +21,15 @@
                 {name: 'dragon', url: 'assets/dragon_skeleton.json'}
             ])
             .load((function (loader, res) {
-                console.log('loading completed!');
-                var arm = PIXI.dragonbones.makeArmature("dragonBoy", "dragon");
+                var arm = PIXI.dragonbones.makeArmature("dragonBoy", "DragonBoy");
+                arm.animation.gotoAndPlay("walk", 0.2);
+
+                var dragon = arm.getDisplay();
+                // position it
+                dragon.x = 200;
+                dragon.y = 200;
+
+                this._stage.addChild(dragon);
             }).bind(this));
     };
 
@@ -60,6 +67,8 @@
         window.requestAnimationFrame( this._onTick );
 
         this._filterCount += 0.1;
+
+        dragonBones.animation.WorldClock.clock.advanceTime(0.02);
 
         this._renderer.render(this._stage);
     };

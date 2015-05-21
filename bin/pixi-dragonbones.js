@@ -5,7 +5,6 @@ var DragonbonesRuntime = require('./DragonbonesRuntime/dragonBones'),
 Dragonbones.makeArmature = function (armatureName, dataName) {
     var factory = new Dragonbones.factory.Factory();
     factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(Dragonbones.loaders.skeletonParser.skeletons[dataName]));
-    factory.addTextureAtlas(new Dragonbones.textures.TextureAtlas(texture, Dragonbones.loaders.skeletonParser.atlases[dataName]));
 
     var armature = factory.buildArmature(armatureName);
 
@@ -16,11 +15,17 @@ Dragonbones.makeArmature = function (armatureName, dataName) {
 
 Dragonbones.loaders = require('./loaders');
 
-module.exports = PIXI.dragonbones = Dragonbones;
+module.exports = {
+    runtime: DragonbonesRuntime,
+    dragonbones: Dragonbones
+};
+
+PIXI.dragonbones = Dragonbones;
+dragonBones = DragonbonesRuntime;
 
 
 
-},{"./Dragonbones":5,"./DragonbonesRuntime/dragonBones":2,"./loaders":8}],2:[function(require,module,exports){
+},{"./Dragonbones":6,"./DragonbonesRuntime/dragonBones":2,"./loaders":10}],2:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -3614,8 +3619,50 @@ var DisplayBridge = (function () {
 module.exports = DisplayBridge;
 
 },{}],4:[function(require,module,exports){
-var DragonbonesRuntime = require('../../DragonbonesRuntime/dragonBones'),
-    DisplayBridge  = require('../display/DisplayBridge');
+var Sprite = (function (parent) {
+    var Sprite = function (texture) {
+        parent.call(this, texture);
+    };
+
+    Sprite.prototype = Object.create(parent.prototype);
+    Sprite.prototype.constructor = Sprite;
+
+    Sprite.prototype.updateTransform = function(matrix, transform)
+    {
+        var parentTransform = this.parent.worldTransform;
+        var worldTransform = this.worldTransform;
+
+        var px = this.pivot.x;
+        var py = this.pivot.y;
+
+        var a00 = this.scale.x * Math.cos(this.rotation + this.skewY),
+            a01 = this.scale.y * Math.sin(-this.rotation - this.skewX),
+            a10 = this.scale.x * Math.sin(this.rotation + this.skewY),
+            a11 = this.scale.y * Math.cos(this.rotation + this.skewX),
+            a02 = this.position.x - a00 * px - py * a01,
+            a12 = this.position.y - a11 * py - px * a10,
+            b00 = parentTransform.a, b01 = parentTransform.c,
+            b10 = parentTransform.b, b11 = parentTransform.d;
+
+        worldTransform.a = b00 * a00 + b01 * a10;
+        worldTransform.c = b00 * a01 + b01 * a11;
+        worldTransform.tx = b00 * a02 + b01 * a12 + parentTransform.tx;
+
+        worldTransform.b = b10 * a00 + b11 * a10;
+        worldTransform.d = b10 * a01 + b11 * a11;
+        worldTransform.ty = b10 * a02 + b11 * a12 + parentTransform.ty;
+
+        this.worldAlpha = this.alpha * this.parent.worldAlpha;
+    };
+
+    return Sprite;
+})(PIXI.Sprite);
+
+module.exports = Sprite;
+},{}],5:[function(require,module,exports){
+var DragonbonesRuntime  = require('../../DragonbonesRuntime/dragonBones'),
+    DisplayBridge       = require('../display/DisplayBridge'),
+    Sprite              = require('../display/Sprite');
 
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -3641,20 +3688,14 @@ var Factory = (function (_super) {
     };
 
     Factory.prototype._generateDisplay = function(textureAtlas, fullName, pivotX, pivotY) {
-        var texture = PIXI.Texture.fromFrame(fullName);
-
-        var image = new PIXI.Sprite(texture);
-        image.pivot.x = pivotX;
-        image.pivot.y = pivotY;
-
-        return image;
+        return new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
     };
 
     return Factory;
 })(DragonbonesRuntime.factorys.BaseFactory);
 
 module.exports = Factory;
-},{"../../DragonbonesRuntime/dragonBones":2,"../display/DisplayBridge":3}],5:[function(require,module,exports){
+},{"../../DragonbonesRuntime/dragonBones":2,"../display/DisplayBridge":3,"../display/Sprite":4}],6:[function(require,module,exports){
 var DragonbonesRuntime = require('../DragonbonesRuntime/dragonBones');
 
 
@@ -3669,7 +3710,7 @@ module.exports = {
         TextureAtlas: require('./texture/TextureAtlas')
     }
 };
-},{"../DragonbonesRuntime/dragonBones":2,"./display/DisplayBridge":3,"./factories/Factory":4,"./texture/TextureAtlas":6}],6:[function(require,module,exports){
+},{"../DragonbonesRuntime/dragonBones":2,"./display/DisplayBridge":3,"./factories/Factory":5,"./texture/TextureAtlas":7}],7:[function(require,module,exports){
 var DragonbonesRuntime = require('../../DragonbonesRuntime/dragonBones');
 
 var TextureAtlas = (function () {
@@ -3703,14 +3744,56 @@ var TextureAtlas = (function () {
             this._regions[subTextureName] = textureAtlasData[subTextureName];
         }
     };
+
     return TextureAtlas;
 })();
 
 module.exports = TextureAtlas;
 
-},{"../../DragonbonesRuntime/dragonBones":2}],7:[function(require,module,exports){
-var Resource = PIXI.loaders.Resource,
-    async = PIXI.utils.async;
+},{"../../DragonbonesRuntime/dragonBones":2}],8:[function(require,module,exports){
+var Resource    = PIXI.loaders.Resource,
+    async       = PIXI.utils.async;
+
+var AtlasParser = function () {
+    return function (resource, next) {
+        if (!resource.data || !resource.isJson) {
+            return next();
+        }
+
+        var atlasData = resource.data;
+
+        var imagePath = resource.url.substr(0, resource.url.lastIndexOf('/') + 1) + atlasData.imagePath;
+
+        var loadOptions = {
+            crossOrigin: resource.crossOrigin,
+            loadType: Resource.LOAD_TYPE.IMAGE
+        };
+
+        PIXI.utils.TextureCache.dragonbones = PIXI.TextureCache.dragonbones || {};
+        PIXI.utils.TextureCache.dragonbones[atlasData.name] = {};
+
+        this.add(resource.name + '_image', imagePath, loadOptions, function (res) {
+            var frames = atlasData.SubTexture;
+
+            var currentFrame;
+            for( var i = 0 ; i < frames.length ; i++ ) {
+                var currentFrame = frames[i];
+
+                var size = new PIXI.math.Rectangle(currentFrame.x, currentFrame.y, currentFrame.width, currentFrame.height);
+
+                PIXI.utils.TextureCache.dragonbones[atlasData.name][currentFrame.name] = new PIXI.Texture(res.texture.baseTexture, size, size.clone(), null, false);
+            };
+
+            next();
+        });
+    }
+};
+
+module.exports = AtlasParser;
+},{}],9:[function(require,module,exports){
+var Resource    = PIXI.loaders.Resource,
+    async       = PIXI.utils.async,
+    AtlasParser = require('./AtlasParser');
 
 var SkeletonParser = function () {
     return function (resource, next) {
@@ -3718,36 +3801,29 @@ var SkeletonParser = function () {
             return next();
         }
 
-        SkeletonParser.skeletons[resource.name] = resource.data;
+        var skeletonData = resource.data;
+        SkeletonParser.skeletons[skeletonData.name] = skeletonData;
 
         var atlasPath = resource.url.split('_skeleton.json')[0] + '_atlas.json';
+        var atlasKey = resource.name + '_atlas';
 
-        var atlasOptions = {
-            crossOrigin: resource.crossOrigin,
-            xhrType: Resource.XHR_RESPONSE_TYPE.JSON
-        };
-        
-        this.add(resource.name + '_atlas', atlasPath, atlasOptions, function (res) {
-            var data = this.data;
-
-            SkeletonParser.atlases[this.name] = data;
-
-            //var atlasImagesPaths = [ data.imagePath ];
-
+        var atlasLoader = new PIXI.loaders.Loader();
+        atlasLoader.use(AtlasParser());
+        atlasLoader.add(skeletonData.name + '_atlas', atlasPath);
+        atlasLoader.load((function (loader, res) {
             next();
-        });
+        }).bind(this));
     }
 };
 
 SkeletonParser.skeletons = {};
-SkeletonParser.atlases = {};
 
 module.exports = SkeletonParser;
-},{}],8:[function(require,module,exports){
+},{"./AtlasParser":8}],10:[function(require,module,exports){
 module.exports = {
     skeletonParser: require('./SkeletonParser')
 };
-},{"./SkeletonParser":7}]},{},[1])
+},{"./SkeletonParser":9}]},{},[1])
 
 
 //# sourceMappingURL=pixi-dragonbones.js.map
