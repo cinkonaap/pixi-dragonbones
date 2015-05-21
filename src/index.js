@@ -1,1 +1,1 @@
-PIXI.dragonbones = require('./Pixi');
+module.exports = PIXI.dragonbones = require('./Pixi');
