@@ -26,8 +26,18 @@
 
                 var dragon = arm.getDisplay();
                 // position it
-                dragon.x = 200;
-                dragon.y = 200;
+                dragon.x = 270;
+                dragon.y = 450;
+                dragon.interactive = true;
+
+                var state = 0;
+                dragon.on('mousedown', function (e) {
+                    state == 0 ? arm.animation.gotoAndPlay("stand", 0.2) : arm.animation.gotoAndPlay("walk", 0.2);
+
+                    state = (state + 1) % 2;
+
+                    //arm.getSlot("clothes").setDisplay(factory.getTextureDisplay("parts/clothes" + 1));
+                });
 
                 this._stage.addChild(dragon);
             }).bind(this));

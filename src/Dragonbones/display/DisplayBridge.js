@@ -38,9 +38,11 @@ var DisplayBridge = (function () {
     };
 
     DisplayBridge.prototype.updateTransform = function (matrix, transform) {
-        this._display.x = matrix.tx;
-        this._display.y = matrix.ty;
+        this._display.x = transform.x;
+        this._display.y = transform.y;
+
         this._display.rotation = transform.skewX;
+
         this._display.scale.x = transform.scaleX;
         this._display.scale.y = transform.scaleY;
     };

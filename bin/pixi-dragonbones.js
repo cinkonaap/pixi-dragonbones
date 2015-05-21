@@ -25,7 +25,7 @@ dragonBones = DragonbonesRuntime;
 
 
 
-},{"./Dragonbones":6,"./DragonbonesRuntime/dragonBones":2,"./loaders":10}],2:[function(require,module,exports){
+},{"./Dragonbones":7,"./DragonbonesRuntime/dragonBones":2,"./loaders":11}],2:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -3582,9 +3582,11 @@ var DisplayBridge = (function () {
     };
 
     DisplayBridge.prototype.updateTransform = function (matrix, transform) {
-        this._display.x = matrix.tx;
-        this._display.y = matrix.ty;
+        this._display.x = transform.x;
+        this._display.y = transform.y;
+
         this._display.rotation = transform.skewX;
+
         this._display.scale.x = transform.scaleX;
         this._display.scale.y = transform.scaleY;
     };
@@ -3619,6 +3621,24 @@ var DisplayBridge = (function () {
 module.exports = DisplayBridge;
 
 },{}],4:[function(require,module,exports){
+var DisplayObjectContainer = (function (parent) {
+    var DisplayObjectContainer = function () {
+        parent.call(this);
+    };
+
+    DisplayObjectContainer.prototype = Object.create(parent.prototype);
+    DisplayObjectContainer.prototype.constructor = DisplayObjectContainer;
+
+    DisplayObjectContainer.prototype.updateTransform = function()
+    {
+        parent.prototype.updateTransform.call(this);
+    };
+
+    return DisplayObjectContainer;
+})(PIXI.Container);
+
+module.exports = DisplayObjectContainer;
+},{}],5:[function(require,module,exports){
 var Sprite = (function (parent) {
     var Sprite = function (texture) {
         parent.call(this, texture);
@@ -3627,42 +3647,20 @@ var Sprite = (function (parent) {
     Sprite.prototype = Object.create(parent.prototype);
     Sprite.prototype.constructor = Sprite;
 
-    Sprite.prototype.updateTransform = function(matrix, transform)
+    Sprite.prototype.updateTransform = function ()
     {
-        var parentTransform = this.parent.worldTransform;
-        var worldTransform = this.worldTransform;
-
-        var px = this.pivot.x;
-        var py = this.pivot.y;
-
-        var a00 = this.scale.x * Math.cos(this.rotation + this.skewY),
-            a01 = this.scale.y * Math.sin(-this.rotation - this.skewX),
-            a10 = this.scale.x * Math.sin(this.rotation + this.skewY),
-            a11 = this.scale.y * Math.cos(this.rotation + this.skewX),
-            a02 = this.position.x - a00 * px - py * a01,
-            a12 = this.position.y - a11 * py - px * a10,
-            b00 = parentTransform.a, b01 = parentTransform.c,
-            b10 = parentTransform.b, b11 = parentTransform.d;
-
-        worldTransform.a = b00 * a00 + b01 * a10;
-        worldTransform.c = b00 * a01 + b01 * a11;
-        worldTransform.tx = b00 * a02 + b01 * a12 + parentTransform.tx;
-
-        worldTransform.b = b10 * a00 + b11 * a10;
-        worldTransform.d = b10 * a01 + b11 * a11;
-        worldTransform.ty = b10 * a02 + b11 * a12 + parentTransform.ty;
-
-        this.worldAlpha = this.alpha * this.parent.worldAlpha;
+        parent.prototype.updateTransform.call(this);
     };
 
     return Sprite;
 })(PIXI.Sprite);
 
 module.exports = Sprite;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var DragonbonesRuntime  = require('../../DragonbonesRuntime/dragonBones'),
     DisplayBridge       = require('../display/DisplayBridge'),
     Sprite              = require('../display/Sprite');
+    DOC                 = require('../display/DisplayObjectContainer');
 
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -3678,7 +3676,7 @@ var Factory = (function (_super) {
     };
 
     Factory.prototype._generateArmature = function() {
-        var armature = new DragonbonesRuntime.Armature(new PIXI.DisplayObjectContainer());
+        var armature = new DragonbonesRuntime.Armature(new DOC());
         return armature;
     };
 
@@ -3688,14 +3686,18 @@ var Factory = (function (_super) {
     };
 
     Factory.prototype._generateDisplay = function(textureAtlas, fullName, pivotX, pivotY) {
-        return new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
+        var image = new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
+        image.pivot.x = pivotX;
+        image.pivot.y = pivotY;
+
+        return image;
     };
 
     return Factory;
 })(DragonbonesRuntime.factorys.BaseFactory);
 
 module.exports = Factory;
-},{"../../DragonbonesRuntime/dragonBones":2,"../display/DisplayBridge":3,"../display/Sprite":4}],6:[function(require,module,exports){
+},{"../../DragonbonesRuntime/dragonBones":2,"../display/DisplayBridge":3,"../display/DisplayObjectContainer":4,"../display/Sprite":5}],7:[function(require,module,exports){
 var DragonbonesRuntime = require('../DragonbonesRuntime/dragonBones');
 
 
@@ -3710,7 +3712,7 @@ module.exports = {
         TextureAtlas: require('./texture/TextureAtlas')
     }
 };
-},{"../DragonbonesRuntime/dragonBones":2,"./display/DisplayBridge":3,"./factories/Factory":5,"./texture/TextureAtlas":7}],7:[function(require,module,exports){
+},{"../DragonbonesRuntime/dragonBones":2,"./display/DisplayBridge":3,"./factories/Factory":6,"./texture/TextureAtlas":8}],8:[function(require,module,exports){
 var DragonbonesRuntime = require('../../DragonbonesRuntime/dragonBones');
 
 var TextureAtlas = (function () {
@@ -3750,7 +3752,7 @@ var TextureAtlas = (function () {
 
 module.exports = TextureAtlas;
 
-},{"../../DragonbonesRuntime/dragonBones":2}],8:[function(require,module,exports){
+},{"../../DragonbonesRuntime/dragonBones":2}],9:[function(require,module,exports){
 var Resource    = PIXI.loaders.Resource,
     async       = PIXI.utils.async;
 
@@ -3790,7 +3792,7 @@ var AtlasParser = function () {
 };
 
 module.exports = AtlasParser;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var Resource    = PIXI.loaders.Resource,
     async       = PIXI.utils.async,
     AtlasParser = require('./AtlasParser');
@@ -3819,11 +3821,11 @@ var SkeletonParser = function () {
 SkeletonParser.skeletons = {};
 
 module.exports = SkeletonParser;
-},{"./AtlasParser":8}],10:[function(require,module,exports){
+},{"./AtlasParser":9}],11:[function(require,module,exports){
 module.exports = {
     skeletonParser: require('./SkeletonParser')
 };
-},{"./SkeletonParser":9}]},{},[1])
+},{"./SkeletonParser":10}]},{},[1])
 
 
 //# sourceMappingURL=pixi-dragonbones.js.map
