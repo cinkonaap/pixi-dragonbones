@@ -22,7 +22,7 @@
             ])
             .load((function (loader, res) {
                 var skeleton = PIXI.dragonbones.display.Skeleton.makeArmature("dragonBoy", "DragonBoy");
-                skeleton.animation.gotoAndPlay("walk", 0.2);
+                skeleton.armature.animation.gotoAndPlay("walk", 0.2);
 
                 skeleton.display.x = 270;
                 skeleton.display.y = 450;
@@ -30,11 +30,11 @@
 
                 var state = 0;
                 skeleton.display.on('mousedown', function (e) {
-                    state == 0 ? skeleton.animation.gotoAndPlay("stand", 0.2) : skeleton.animation.gotoAndPlay("walk", 0.2);
+                    state == 0 ? skeleton.armature.animation.gotoAndPlay("stand", 0.2) : skeleton.armature.animation.gotoAndPlay("walk", 0.2);
 
                     state = (state + 1) % 2;
 
-                    //arm.getSlot("clothes").setDisplay(factory.getTextureDisplay("parts/clothes" + 1));
+                    skeleton.armature.getSlot("clothes").setDisplay(skeleton.factory.getTextureDisplay("parts/clothes" + ( Math.floor( Math.random() * 4 ) + 1 ) ));
                 });
 
                 this._stage.addChild(skeleton.display);

@@ -2349,7 +2349,7 @@ var dragonBones;
                                 break;
                             case objects.DisplayData.IMAGE:
                             default:
-                                helpArray[i] = this._generateDisplay(this._textureAtlasDic[this._currentTextureAtlasName], displayData.name, displayData.pivot.x, displayData.pivot.y);
+                                helpArray[i] = this._generateDisplay(displayData.name, displayData.pivot.x, displayData.pivot.y);
                                 break;
                         }
                     }
@@ -2388,7 +2388,7 @@ var dragonBones;
                         }
                     }
 
-                    return this._generateDisplay(textureAtlas, textureName, pivotX, pivotY);
+                    return this._generateDisplay(textureName, pivotX, pivotY);
                 }
                 return null;
             };
@@ -2401,7 +2401,7 @@ var dragonBones;
                 return null;
             };
 
-            BaseFactory.prototype._generateDisplay = function (textureAtlas, fullName, pivotX, pivotY) {
+            BaseFactory.prototype._generateDisplay = function (fullName, pivotX, pivotY) {
                 return null;
             };
             return BaseFactory;
