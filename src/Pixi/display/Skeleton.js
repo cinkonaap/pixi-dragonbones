@@ -6,7 +6,7 @@ var Skeleton = (function () {
     var Skeleton = function () {
         this._factory = undefined;
         this._armature = undefined;
-        this._display = undefined;
+        //this._display = undefined;
     };
 
     Skeleton.makeArmature = function (armatureName, dataName) {
@@ -19,20 +19,25 @@ var Skeleton = (function () {
 
         DragonbonesRuntime.animation.WorldClock.clock.add(skeleton._armature);
 
-        skeleton._display = skeleton._armature.getDisplay();
-
         return skeleton;
     };
 
+    Skeleton.prototype.dispose = function () {};
+
     Object.defineProperties(Skeleton.prototype, {
-        animation: {
+        armature: {
             get: function () {
-                return this._armature.animation;
+                return this._armature;
             }
         },
         display: {
             get: function () {
-                return this._display;
+                return this._armature.getDisplay();
+            }
+        },
+        factory: {
+            get: function () {
+                return this._factory;
             }
         }
     });
