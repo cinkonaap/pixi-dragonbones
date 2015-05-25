@@ -36,7 +36,7 @@ And do not forget to run tick function of DragonBones:
 PIXI.dragonbones.runtime.animation.WorldClock.clock.advanceTime(timeElapsed);
 ````
 
-From now on, use instantiated skeleton as reference to `armature`, `display` and `factory` objects.
+From now on, use instantiated skeleton as reference to its `armature`, `display` and `factory` objects.
 
 Change display of `Slot`:
 
@@ -44,6 +44,11 @@ Change display of `Slot`:
 var randomCloth = this._skeleton.factory.getTextureDisplay("parts/clothes" + ( Math.floor( Math.random() * 4 ) + 1 ));
 this._skeleton.armature.getSlot("clothes").setDisplay( randomCloth );
 ````
+
+## To-Do
+* Handle skewX and skewY transform properties properly
+* Disposing
+* Caching
 
 ## Building
 
