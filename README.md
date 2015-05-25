@@ -36,7 +36,7 @@ And do not forget to run tick function of DragonBones:
 PIXI.dragonbones.runtime.animation.WorldClock.clock.advanceTime(timeElapsed);
 ````
 
-From now on, use instantiated object as reference to `armature`, `display` and `factory` objects.
+From now on, use instantiated skeleton as reference to `armature`, `display` and `factory` objects.
 
 Change display of `Slot`:
 
