@@ -26,7 +26,22 @@ var Factory = (function (_super) {
         return slot;
     };
 
-    Factory.prototype._generateDisplay = function(textureAtlas, fullName, pivotX, pivotY) {
+    Factory.prototype.getTextureDisplay = function (fullName, pivotX, pivotY) {
+        if (isNaN(pivotX) || isNaN(pivotY)) {
+            var data = this._dataDic[this._currentDataName];
+            if (data) {
+                var pivot = data.getSubTexturePivot(fullName);
+                if (pivot) {
+                    pivotX = pivot.x;
+                    pivotY = pivot.y;
+                }
+            }
+        }
+
+        return this._generateDisplay(fullName, pivotX, pivotY);
+    };
+
+    Factory.prototype._generateDisplay = function(fullName, pivotX, pivotY) {
         var image = new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
         image.pivot.x = pivotX;
         image.pivot.y = pivotY;
