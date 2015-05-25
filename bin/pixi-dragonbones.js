@@ -2353,7 +2353,7 @@ var dragonBones;
                                 break;
                             case objects.DisplayData.IMAGE:
                             default:
-                                helpArray[i] = this._generateDisplay(this._textureAtlasDic[this._currentTextureAtlasName], displayData.name, displayData.pivot.x, displayData.pivot.y);
+                                helpArray[i] = this._generateDisplay(displayData.name, displayData.pivot.x, displayData.pivot.y);
                                 break;
                         }
                     }
@@ -2392,7 +2392,7 @@ var dragonBones;
                         }
                     }
 
-                    return this._generateDisplay(textureAtlas, textureName, pivotX, pivotY);
+                    return this._generateDisplay(textureName, pivotX, pivotY);
                 }
                 return null;
             };
@@ -2405,7 +2405,7 @@ var dragonBones;
                 return null;
             };
 
-            BaseFactory.prototype._generateDisplay = function (textureAtlas, fullName, pivotX, pivotY) {
+            BaseFactory.prototype._generateDisplay = function (fullName, pivotX, pivotY) {
                 return null;
             };
             return BaseFactory;
@@ -3661,7 +3661,22 @@ var Factory = (function (_super) {
         return slot;
     };
 
-    Factory.prototype._generateDisplay = function(textureAtlas, fullName, pivotX, pivotY) {
+    Factory.prototype.getTextureDisplay = function (fullName, pivotX, pivotY) {
+        if (isNaN(pivotX) || isNaN(pivotY)) {
+            var data = this._dataDic[this._currentDataName];
+            if (data) {
+                var pivot = data.getSubTexturePivot(fullName);
+                if (pivot) {
+                    pivotX = pivot.x;
+                    pivotY = pivot.y;
+                }
+            }
+        }
+
+        return this._generateDisplay(fullName, pivotX, pivotY);
+    };
+
+    Factory.prototype._generateDisplay = function(fullName, pivotX, pivotY) {
         var image = new Sprite(PIXI.utils.TextureCache.dragonbones[this._currentDataName][fullName]);
         image.pivot.x = pivotX;
         image.pivot.y = pivotY;
@@ -3737,33 +3752,40 @@ var Skeleton = (function () {
     var Skeleton = function () {
         this._factory = undefined;
         this._armature = undefined;
-        this._display = undefined;
+        //this._display = undefined;
     };
 
     Skeleton.makeArmature = function (armatureName, dataName) {
         var skeleton = new Skeleton();
 
         skeleton._factory = new Dragonbones.factory.Factory();
-        skeleton._factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(skeletonParser.skeletons[dataName]));
+        skeleton._factory.addSkeletonData(
+            DragonbonesRuntime.objects.DataParser.parseSkeletonData(skeletonParser.skeletons[dataName])
+        );
 
         skeleton._armature = skeleton._factory.buildArmature(armatureName);
 
         DragonbonesRuntime.animation.WorldClock.clock.add(skeleton._armature);
 
-        skeleton._display = skeleton._armature.getDisplay();
-
         return skeleton;
     };
 
+    Skeleton.prototype.dispose = function () {};
+
     Object.defineProperties(Skeleton.prototype, {
-        animation: {
+        armature: {
             get: function () {
-                return this._armature.animation;
+                return this._armature;
             }
         },
         display: {
             get: function () {
-                return this._display;
+                return this._armature.getDisplay();
+            }
+        },
+        factory: {
+            get: function () {
+                return this._factory;
             }
         }
     });

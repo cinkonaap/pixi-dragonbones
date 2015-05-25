@@ -3,8 +3,11 @@
         this._stage = new PIXI.Stage(0x4F5C5C, true);
         this._renderer = new PIXI.autoDetectRenderer(800, 600);
 
+        this._skeleton = undefined;
+
         document.body.appendChild(this._renderer.view);
 
+        this._time = 0;
         this._onTick = this._onTick.bind(this);
 
         this._addGraphics();
@@ -24,7 +27,7 @@
                 var skeleton = PIXI.dragonbones.display.Skeleton.makeArmature("dragonBoy", "DragonBoy");
                 skeleton.armature.animation.gotoAndPlay("walk", 0.2);
 
-                skeleton.display.x = 270;
+                skeleton.display.x = 360;
                 skeleton.display.y = 450;
                 skeleton.display.interactive = true;
 
@@ -34,10 +37,13 @@
 
                     state = (state + 1) % 2;
 
-                    skeleton.armature.getSlot("clothes").setDisplay(skeleton.factory.getTextureDisplay("parts/clothes" + ( Math.floor( Math.random() * 4 ) + 1 ) ));
+                    var randomCloth = skeleton.factory.getTextureDisplay("parts/clothes" + ( Math.floor( Math.random() * 4 ) + 1 ));
+                    skeleton.armature.getSlot("clothes").setDisplay( randomCloth );
                 });
 
                 this._stage.addChild(skeleton.display);
+
+                this._skeleton = skeleton;
             }).bind(this));
     };
 
@@ -68,15 +74,20 @@
         this._stage.addChild(this._graphic1);
         this._graphic1.position.x = 50;
         this._graphic1.position.y = 50;
-
     };
 
-    Application.prototype._onTick = function () {
+    Application.prototype._onTick = function (e) {
         window.requestAnimationFrame( this._onTick );
+
 
         this._filterCount += 0.1;
 
         PIXI.dragonbones.runtime.animation.WorldClock.clock.advanceTime(0.02);
+
+        if(this._skeleton != null) {
+            var headBone = this._skeleton.armature.getBone("head");
+            headBone.offset.skewX =  (e / 250) * (Math.PI / 180);
+        }
 
         this._renderer.render(this._stage);
     };

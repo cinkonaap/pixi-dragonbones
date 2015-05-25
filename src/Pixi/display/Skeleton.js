@@ -13,7 +13,9 @@ var Skeleton = (function () {
         var skeleton = new Skeleton();
 
         skeleton._factory = new Dragonbones.factory.Factory();
-        skeleton._factory.addSkeletonData(DragonbonesRuntime.objects.DataParser.parseSkeletonData(skeletonParser.skeletons[dataName]));
+        skeleton._factory.addSkeletonData(
+            DragonbonesRuntime.objects.DataParser.parseSkeletonData(skeletonParser.skeletons[dataName])
+        );
 
         skeleton._armature = skeleton._factory.buildArmature(armatureName);
 
