@@ -7,6 +7,9 @@ gulp.task('watch', function () {
     gulp.watch(paths.scripts, ['jshint'])
         .on('change', logChanges);
 
+    gulp.watch(paths.appScripts, ['app'])
+        .on('change', logChanges);
+        
     return bundle.watch();
 });
 
