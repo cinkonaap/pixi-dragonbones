@@ -21,25 +21,14 @@
         PIXI.loader
             .use(PIXI.dragonbones.loaders.skeletonParser())
             .add([
-                {name: 'dragon', url: 'assets/dragon_skeleton.json'}
+                {name: 'warrior', url: 'assets/warrior_skeleton.json'}
             ])
             .load((function (loader, res) {
-                var skeleton = PIXI.dragonbones.display.Skeleton.makeArmature("dragonBoy", "DragonBoy");
-                skeleton.armature.animation.gotoAndPlay("walk", 0.2);
+                var skeleton = PIXI.dragonbones.display.Skeleton.makeArmature("warrior_Anims", "warrior");
+                skeleton.armature.animation.gotoAndPlay("wrong_0", 0.2);
 
                 skeleton.display.x = 360;
                 skeleton.display.y = 450;
-                skeleton.display.interactive = true;
-
-                var state = 0;
-                skeleton.display.on('mousedown', function (e) {
-                    state == 0 ? skeleton.armature.animation.gotoAndPlay("stand", 0.2) : skeleton.armature.animation.gotoAndPlay("walk", 0.2);
-
-                    state = (state + 1) % 2;
-
-                    var randomCloth = skeleton.factory.getTextureDisplay("parts/clothes" + ( Math.floor( Math.random() * 4 ) + 1 ));
-                    skeleton.armature.getSlot("clothes").setDisplay( randomCloth );
-                });
 
                 this._stage.addChild(skeleton.display);
 
@@ -79,15 +68,7 @@
     Application.prototype._onTick = function (e) {
         window.requestAnimationFrame( this._onTick );
 
-
-        this._filterCount += 0.1;
-
         PIXI.dragonbones.runtime.animation.WorldClock.clock.advanceTime(0.02);
-
-        if(this._skeleton != null) {
-            var headBone = this._skeleton.armature.getBone("head");
-            headBone.offset.skewX =  (e / 250) * (Math.PI / 180);
-        }
 
         this._renderer.render(this._stage);
     };
