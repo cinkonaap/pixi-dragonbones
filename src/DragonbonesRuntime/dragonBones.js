@@ -2299,14 +2299,16 @@ var dragonBones;
                 var boneData;
                 var boneDataList = armatureData.getBoneDataList();
                 for (var index in boneDataList) {
-                    boneData = boneDataList[index];
-                    bone = new dragonBones.Bone();
-                    bone.name = boneData.name;
-                    bone.origin.copy(boneData.transform);
-                    if (armatureData.getBoneData(boneData.parent)) {
-                        armature.addChild(bone, boneData.parent);
-                    } else {
-                        armature.addChild(bone, null);
+                    if (boneDataList.hasOwnProperty(index)) {
+                        boneData = boneDataList[index];
+                        bone = new dragonBones.Bone();
+                        bone.name = boneData.name;
+                        bone.origin.copy(boneData.transform);
+                        if (armatureData.getBoneData(boneData.parent)) {
+                            armature.addChild(bone, boneData.parent);
+                        } else {
+                            armature.addChild(bone, null);
+                        }
                     }
                 }
 
@@ -2343,37 +2345,39 @@ var dragonBones;
                 var slotDataList = skinData.getSlotDataList();
                 var displayDataList;
                 for (var index in slotDataList) {
-                    slotData = slotDataList[index];
-                    bone = armature.getBone(slotData.parent);
-                    if (!bone) {
-                        continue;
-                    }
-                    displayDataList = slotData.getDisplayDataList();
-                    slot = this._generateSlot();
-                    slot.name = slotData.name;
-                    slot._originZOrder = slotData.zOrder;
-                    slot._dislayDataList = displayDataList;
-
-                    helpArray.length = 0;
-                    i = displayDataList.length;
-                    while (i--) {
-                        displayData = displayDataList[i];
-                        switch (displayData.type) {
-                            case objects.DisplayData.ARMATURE:
-                                childArmature = this.buildArmature(displayData.name, null, this._currentDataName, this._currentTextureAtlasName, null);
-                                if (childArmature) {
-                                    helpArray[i] = childArmature;
-                                }
-                                break;
-                            case objects.DisplayData.IMAGE:
-                            default:
-                                helpArray[i] = this._generateDisplay(displayData.name, displayData.pivot.x, displayData.pivot.y);
-                                break;
+                    if (slotDataList.hasOwnProperty(index)) {
+                        slotData = slotDataList[index];
+                        bone = armature.getBone(slotData.parent);
+                        if (!bone) {
+                            continue;
                         }
+                        displayDataList = slotData.getDisplayDataList();
+                        slot = this._generateSlot();
+                        slot.name = slotData.name;
+                        slot._originZOrder = slotData.zOrder;
+                        slot._dislayDataList = displayDataList;
+
+                        helpArray.length = 0;
+                        i = displayDataList.length;
+                        while (i--) {
+                            displayData = displayDataList[i];
+                            switch (displayData.type) {
+                                case objects.DisplayData.ARMATURE:
+                                    childArmature = this.buildArmature(displayData.name, null, this._currentDataName, this._currentTextureAtlasName, null);
+                                    if (childArmature) {
+                                        helpArray[i] = childArmature;
+                                    }
+                                    break;
+                                case objects.DisplayData.IMAGE:
+                                default:
+                                    helpArray[i] = this._generateDisplay(displayData.name, displayData.pivot.x, displayData.pivot.y);
+                                    break;
+                            }
+                        }
+                        slot.setDisplayList(helpArray);
+                        slot._changeDisplay(0);
+                        bone.addChild(slot);
                     }
-                    slot.setDisplayList(helpArray);
-                    slot._changeDisplay(0);
-                    bone.addChild(slot);
                 }
 
                 armature._slotsZOrderChanged = true;
