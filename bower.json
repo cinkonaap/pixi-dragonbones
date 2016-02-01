@@ -1,0 +1,24 @@
+{
+  "name": "pixi-dragonbones",
+  "version": "0.0.1",
+  "authors": [
+    "cinkonaap <horoszko.marcin@gmail.com>"
+  ],
+  "description": "Pixi.js plugin that enables Dragonbones support.",
+  "main": "bin/pixi-dragonbones.js",
+  "keywords": [
+    "pixi",
+    "dragonbones",
+    "skeletal",
+    "animations",
+    "canvas"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "app",
+    "commons",
+    "gulp",
+    "src"
+  ]
+}
